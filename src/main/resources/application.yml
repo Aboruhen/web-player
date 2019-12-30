@@ -1,9 +1,8 @@
 server:
   port: 8080
 
-STORE_LOCATION_PATH: .
+STORE_LOCATION_PATH: ./video_storage
 
 spring:
   thymeleaf:
-    mode: LEGACYHTML5
 #    check-template: true
