@@ -21,7 +21,7 @@
     <tr th:each="media : ${mediaList}" class="media-row">
         <td th:text="${media.title}" class="media-title-cell">Title</td>
         <td>
-            <a th:href="@{/{id}(id=${media.id})}">Play</a>
+            <a th:href="@{/resource/{id}(id=${media.id})}">Play</a>
         </td>
     </tr>
 </table>

@@ -33,7 +33,7 @@ public class PageController {
         return "index";
     }
 
-    @GetMapping("/{mediaId}")
+    @GetMapping("/resource/{mediaId}")
     public String playMedia(@PathVariable Long mediaId, Model model) {
         model.addAttribute("mediaId", mediaId);
         return "video";
