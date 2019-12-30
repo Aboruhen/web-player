@@ -1,0 +1,7 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <video autoplay="autoplay" controls>
+        <source th:src="@{/media/{id}(id=${mediaId})}">
+    </video>
+</body>
