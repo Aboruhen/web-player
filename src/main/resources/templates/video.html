@@ -2,7 +2,7 @@
 
 <body>
     <!--/*@thymesVar id="mediaId" type="java.lang.Long"*/-->
-    <video autoplay="autoplay" controls th:onended="|runNext(${mediaId})|">
+    <video autoplay controls controlsList="nodownload" th:onended="|runNext(${mediaId})|">
         <source th:src="@{/media/{id}(id=${mediaId})}">
     </video>
 </body>

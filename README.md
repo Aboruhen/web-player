@@ -29,3 +29,4 @@ env variable `STORE_LOCATION_PATH` can be used as default folder resource locati
 ### Web available Video types
 
 * [Vedio Media Type](https://www.iana.org/assignments/media-types/media-types.xhtml#video)
+* [Video Advanced Features](https://blog.addpipe.com/10-advanced-features-in-html5-video-player/)
