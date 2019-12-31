@@ -30,3 +30,9 @@ env variable `STORE_LOCATION_PATH` can be used as default folder resource locati
 
 * [Vedio Media Type](https://www.iana.org/assignments/media-types/media-types.xhtml#video)
 * [Video Advanced Features](https://blog.addpipe.com/10-advanced-features-in-html5-video-player/)
+* [Video Controls] (https://blog.alexdevero.com/build-custom-html5-video-player/)
+
+## Video Converting
+
+* [Ubuntu Converter] (https://www.bugcodemaster.com/article/convert-videos-mkv-using-ffmpeg)
+  `ffmpeg -i input_video.avi output_video.mkv`

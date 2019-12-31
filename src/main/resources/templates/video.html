@@ -5,10 +5,11 @@
     <video autoplay controls controlsList="nodownload" th:onended="|runNext(${mediaId})|">
         <source th:src="@{/media/{id}(id=${mediaId})}">
     </video>
+    <div id="play-btn" class="video-controls">PLAY</div>
 </body>
 
 <script>
     function runNext(currentId) {
-        window.location.href = '/resource/' + currentId + '/next';
+        location.href = '/resource/' + currentId + '/next';
     }
 </script>
