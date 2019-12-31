@@ -10,7 +10,9 @@ import org.thymeleaf.spring5.context.webflux.ReactiveDataDriverContextVariable;
 import reactor.core.publisher.Flux;
 
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Map;
+import java.util.Random;
 
 @RequiredArgsConstructor
 @Controller
@@ -31,6 +33,14 @@ public class PageController {
         ));
 
         return "index";
+    }
+
+    @GetMapping("/resource/{mediaId}/next")
+    public String playNextMedia(@PathVariable Long mediaId) {
+        Collection<Long> longs = fileIndexMap.keySet();
+        int i = new Random().nextInt(longs.size());
+        Long nextId = longs.toArray(new Long[]{})[i];
+        return String.format("redirect:/resource/%s", nextId);
     }
 
     @GetMapping("/resource/{mediaId}")

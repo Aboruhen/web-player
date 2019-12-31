@@ -1,13 +1,14 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <body>
-    <video autoplay="autoplay" controls th:onended="runNext()">
+    <!--/*@thymesVar id="mediaId" type="java.lang.Long"*/-->
+    <video autoplay="autoplay" controls th:onended="|runNext(${mediaId})|">
         <source th:src="@{/media/{id}(id=${mediaId})}">
     </video>
 </body>
 
 <script>
-    function runNext() {
-        // window.location.href='/resource/2';
+    function runNext(currentId) {
+        window.location.href = '/resource/' + currentId + '/next';
     }
 </script>

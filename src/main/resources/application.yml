@@ -4,5 +4,11 @@ server:
 STORE_LOCATION_PATH: ./video_storage
 
 spring:
+  devtools:
+    add-properties: false
   thymeleaf:
 #    check-template: true
+
+logging:
+  level:
+    web: INFO
