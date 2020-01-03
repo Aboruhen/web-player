@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Random;
 
@@ -32,14 +31,14 @@ public class PageController {
         return "index";
     }
 
-    @GetMapping("/lastViewing")
+    @GetMapping("/lastView")
     public String lastViewing(@CookieValue(name = "JSESSIONID") String sessionId) {
-        Path mediaSourceGroupPath = lastSessionStore.findLastView(sessionId);
+        Long mediaId = lastSessionStore.findLastView(sessionId);
 
-        if (Objects.isNull(mediaSourceGroupPath)) {
+        if (Objects.isNull(mediaId)) {
             return "redirect:/";
         }
-        return String.format("redirect:/?group=%s", mediaSourceGroupPath);
+        return String.format("redirect:/resource/%s", mediaId);
     }
 
     @GetMapping("/resource/{mediaId}/next")

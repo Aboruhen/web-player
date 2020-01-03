@@ -47,7 +47,7 @@ public class MediaController {
         log.info("Play video");
 
         Path path = fileIndexService.getMedia(mediaId);
-        lastSessionStore.updateLastView(sessionId, path);
+        lastSessionStore.updateLastView(sessionId, mediaId);
         var video = new UrlResource(String.format("file:%s", path));
         var region = resourceRegion(video, headers);
         return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
