@@ -16,6 +16,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 @RequiredArgsConstructor
@@ -26,6 +27,7 @@ public class FileIndexService {
     @Value("${STORE_LOCATION_PATH}")
     private String locationPath;
     private final Map<Long, Path> fileIndexMap;
+    private final Map<Path, MediaSourceGroup> groupByPath;
     private MediaSourceGroup mediaSourceGroup = null;
     private final AtomicLong atomicLong = new AtomicLong();
 
@@ -49,8 +51,11 @@ public class FileIndexService {
         }
     }
 
-    public MediaSourceGroup mediaSourceGroup() {
-        return mediaSourceGroup;
+    public MediaSourceGroup mediaSourceGroup(String group) {
+        if (Objects.isNull(group) || group.trim().isBlank()){
+            return mediaSourceGroup;
+        }
+        return groupByPath.getOrDefault(Paths.get(group), mediaSourceGroup);
     }
 
     private void generateFilesIndex(MediaSourceGroup root, Path path) throws IOException {
@@ -61,14 +66,15 @@ public class FileIndexService {
 
     private void createFilePathIndex(MediaSourceGroup root, Path path) throws IOException {
         if (Files.isDirectory(path)) {
-            MediaSourceGroup subPath = MediaSourceGroup.builder()
+            MediaSourceGroup subGroup = MediaSourceGroup.builder()
                     .groupLocation(path)
                     .groupName(path.getFileName().toString())
                     .sourceList(new ArrayList<>())
                     .subGroups(new ArrayList<>())
                     .build();
-            root.getSubGroups().add(subPath);
-            generateFilesIndex(subPath, path);
+            root.getSubGroups().add(subGroup);
+            groupByPath.put(path, subGroup);
+            generateFilesIndex(subGroup, path);
             return;
         }
         List<MediaSource> sourceList = root.getSourceList();

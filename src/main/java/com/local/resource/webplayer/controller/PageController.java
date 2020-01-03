@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Random;
 
@@ -17,9 +18,9 @@ public class PageController {
     private final FileIndexService fileIndexService;
 
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(@RequestParam(value = "group", required = false) String group, Model model) {
 
-        MediaSourceGroup mediaSourceGroup = fileIndexService.mediaSourceGroup();
+        MediaSourceGroup mediaSourceGroup = fileIndexService.mediaSourceGroup(group);
 
         model.addAttribute("mediaGroup", mediaSourceGroup);
 
