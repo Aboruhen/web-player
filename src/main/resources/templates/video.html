@@ -1,14 +1,20 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <body>
-    <!--/*@thymesVar id="mediaId" type="java.lang.Long"*/-->
-    <video autoplay controls controlsList="nodownload" th:onended="|runNext(${mediaId})|">
-        <source th:src="@{/media/{id}(id=${mediaId})}">
-    </video>
-    <div id="play-btn" class="video-controls">PLAY</div>
+<!--/*@thymesVar id="mediaId" type="java.lang.Long"*/-->
+<video id="playedVideo" controls controlsList="nodownload"
+       disablePictureInPicture
+       th:onended="|runNext(${mediaId})|" th:onplay="fullScreen()">
+    <source th:src="@{/media/{id}(id=${mediaId})}">
+</video>
+<div id="play-btn" class="video-controls">PLAY</div>
 </body>
 
 <script>
+    function fullScreen() {
+        document.getElementById("playedVideo").requestFullscreen();
+    }
+
     function runNext(currentId) {
         location.href = '/resource/' + currentId + '/next';
     }

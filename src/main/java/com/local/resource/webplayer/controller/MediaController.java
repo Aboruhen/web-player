@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -26,7 +24,6 @@ import java.util.Map;
 public class MediaController {
 
     private static final long RESOURCE_LOAD_BYTE_CHUNK_SIZE = 1_000_000L;
-    private final Map<Long, Path> fileIndexMap;
     private final FileIndexService fileIndexService;
 
     @GetMapping("refresh")
@@ -43,7 +40,7 @@ public class MediaController {
 
         log.info("Play video");
 
-        var video = new UrlResource(String.format("file:%s", fileIndexMap.get(mediaId)));
+        var video = new UrlResource(String.format("file:%s", fileIndexService.getMedia(mediaId)));
         var region = resourceRegion(video, headers);
         return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
                 .contentType(MediaTypeFactory.getMediaType(video).orElse(MediaType.APPLICATION_OCTET_STREAM))

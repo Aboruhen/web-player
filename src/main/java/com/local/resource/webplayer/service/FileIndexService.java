@@ -1,5 +1,7 @@
 package com.local.resource.webplayer.service;
 
+import com.local.resource.webplayer.dto.MediaSource;
+import com.local.resource.webplayer.dto.MediaSourceGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,11 +13,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ public class FileIndexService {
     @Value("${STORE_LOCATION_PATH}")
     private String locationPath;
     private final Map<Long, Path> fileIndexMap;
-    private final Map<Path, Collection<Long>> fileGroups = new HashMap<>();
+    private MediaSourceGroup mediaSourceGroup = null;
     private final AtomicLong atomicLong = new AtomicLong();
 
     @EventListener(ApplicationStartedEvent.class)
@@ -35,34 +35,51 @@ public class FileIndexService {
             atomicLong.set(1);
             Path path = Paths.get(locationPath);
             checkPathLocation(path);
-            generateFilesIndex(path);
+            mediaSourceGroup = MediaSourceGroup.builder()
+                    .groupLocation(path)
+                    .groupName("root")
+                    .sourceList(new ArrayList<>())
+                    .subGroups(new ArrayList<>())
+                    .build();
+            generateFilesIndex(mediaSourceGroup, path);
             log.info("fileIndexMap: {}", fileIndexMap);
-            log.info("fileGroups: {}", fileGroups);
+            log.info("fileGroups: {}", mediaSourceGroup);
         } catch (Exception e) {
             log.error(e.getLocalizedMessage(), e);
         }
     }
 
-    private void generateFilesIndex(Path path) throws IOException {
+    public MediaSourceGroup mediaSourceGroup() {
+        return mediaSourceGroup;
+    }
+
+    private void generateFilesIndex(MediaSourceGroup root, Path path) throws IOException {
         for (Path childPath : Files.newDirectoryStream(path)) {
-            createFilePathIndex(childPath);
+            createFilePathIndex(root, childPath);
         }
     }
 
-    private void createFilePathIndex(Path path) throws IOException {
+    private void createFilePathIndex(MediaSourceGroup root, Path path) throws IOException {
         if (Files.isDirectory(path)) {
-            generateFilesIndex(path);
+            MediaSourceGroup subPath = MediaSourceGroup.builder()
+                    .groupLocation(path)
+                    .groupName(path.getFileName().toString())
+                    .sourceList(new ArrayList<>())
+                    .subGroups(new ArrayList<>())
+                    .build();
+            root.getSubGroups().add(subPath);
+            generateFilesIndex(subPath, path);
             return;
         }
+        List<MediaSource> sourceList = root.getSourceList();
         long index = atomicLong.incrementAndGet();
         fileIndexMap.put(index, path);
-        fileGroups.compute(path, (path1, uuids) -> {
-            if (Objects.isNull(uuids)) {
-                uuids = new HashSet<>();
-            }
-            uuids.add(index);
-            return uuids;
-        });
+        MediaSource mediaSource = MediaSource.builder()
+                .title(path.getFileName().toString())
+                .location(path.toString())
+                .id(String.valueOf(index))
+                .build();
+        sourceList.add(mediaSource);
     }
 
     private void checkPathLocation(Path path) {
@@ -72,6 +89,10 @@ public class FileIndexService {
         if (!Files.isDirectory(path)) {
             throw new RuntimeException("Default path is not valid directory");
         }
+    }
+
+    public Path getMedia(Long mediaId) {
+        return fileIndexMap.get(mediaId);
     }
 
 }

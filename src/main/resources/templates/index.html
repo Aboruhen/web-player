@@ -5,27 +5,50 @@
 <head>
     <title>Web Player</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <link rel="stylesheet" type="text/css" th:href="@{/style.css}"/>
+    <link rel="stylesheet" media="screen" th:href="@{/bootstrap.min.css}"/>
 </head>
-
 <body>
-<h2>Media Sources</h2>
-<input type="button" value="Refresh Media Source" class="btn ui-icon-info" onclick="location.href='/refresh'" />
-<table>
-    <thead>
-    <tr>
-        <th>Media</th>
-        <th>View</th>
-    </tr>
-    </thead>
-    <!--/*@thymesVar id="mediaList" type="com.local.resource.webplayer.dto.MediaSource[]"*/-->
-    <tr th:each="media : ${mediaList}" class="media-row">
-        <td th:text="${media.title}" class="media-title-cell">Title</td>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <a class="navbar-brand">Media Files</a>
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+
+        </ul>
+        <div class="my-2 my-lg-0">
+            <button class="btn btn-outline-warning my-2 my-sm-0" type="button" onclick="location.href='/refresh'">
+                Refresh Media Source
+            </button>
+        </div>
+    </div>
+</nav>
+<!--/*@thymesVar id="mediaGroup" type="com.local.resource.webplayer.dto.MediaSourceGroup"*/-->
+<div th:if="!${#arrays.isEmpty(mediaGroup.subGroups)}" class="btn-toolbar" role="toolbar">
+    <tr th:each="group : ${mediaGroup.subGroups}">
         <td>
-            <a th:href="@{/resource/{id}(id=${media.id})}">Play</a>
+            <button class="btn btn-default" th:value="${group.groupLocation}" th:text="${group.groupName} +' Vote'"
+                    th:onclick="|window.location.href='@{/?group={group}(group=${group.groupLocation})}'|">Name</button>
+
         </td>
     </tr>
-</table>
+</div>
+
+<!--/*@thymesVar id="media" type="com.local.resource.webplayer.dto.MediaSource"*/-->
+<div th:if="!${#arrays.isEmpty(mediaGroup.sourceList)}">
+    <table class="table table-striped">
+        <thead class="thead-light">
+        <tr>
+            <th scope="col">Media</th>
+            <th scope="col">View</th>
+        </tr>
+        </thead>
+        <tr th:each="media : ${mediaGroup.sourceList}">
+            <td th:text="${media.title}">Title</td>
+            <td>
+                <a th:href="@{/resource/{id}(id=${media.id})}">Play</a>
+            </td>
+        </tr>
+    </table>
+</div>
 
 </body>
 
