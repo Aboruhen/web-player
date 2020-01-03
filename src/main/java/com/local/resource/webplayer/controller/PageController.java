@@ -4,8 +4,11 @@ import com.local.resource.webplayer.dto.MediaSourceGroup;
 import com.local.resource.webplayer.repository.LastSessionStore;
 import com.local.resource.webplayer.service.FileIndexService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.JdkIdGenerator;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +26,13 @@ public class PageController {
 
     @GetMapping("/")
     public String index(@RequestParam(value = "group", required = false) String group,
-                        Model model) {
+                        @CookieValue(name = "JSESSIONID", required = false) String sessionId,
+                        ServerHttpResponse response, Model model) {
+        if (Objects.isNull(sessionId)) {
+            JdkIdGenerator jdkIdGenerator = new JdkIdGenerator();
+            response.addCookie(ResponseCookie.from("JSESSIONID", jdkIdGenerator.generateId().toString()).maxAge(-1).httpOnly(true).build());
+        }
+
         MediaSourceGroup mediaSourceGroup = fileIndexService.mediaSourceGroup(group);
 
         model.addAttribute("mediaGroup", mediaSourceGroup);
@@ -32,7 +41,7 @@ public class PageController {
     }
 
     @GetMapping("/lastView")
-    public String lastViewing(@CookieValue(name = "JSESSIONID") String sessionId) {
+    public String lastViewing(@CookieValue(name = "JSESSIONID", required = false) String sessionId) {
         Long mediaId = lastSessionStore.findLastView(sessionId);
 
         if (Objects.isNull(mediaId)) {
