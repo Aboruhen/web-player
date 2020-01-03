@@ -2,9 +2,9 @@
 
 <body>
 <!--/*@thymesVar id="mediaId" type="java.lang.Long"*/-->
-<video id="playedVideo" controls controlsList="nodownload"
+<video id="playedVideo" autoplay controls controlsList="nodownload"
        disablePictureInPicture
-       th:onended="|runNext(${mediaId})|" th:onplay="fullScreen()">
+       th:onended="|runNext(${mediaId})|">
     <source th:src="@{/media/{id}(id=${mediaId})}">
 </video>
 <div id="play-btn" class="video-controls">PLAY</div>
