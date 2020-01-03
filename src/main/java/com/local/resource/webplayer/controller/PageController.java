@@ -1,6 +1,7 @@
 package com.local.resource.webplayer.controller;
 
 import com.local.resource.webplayer.dto.MediaSourceGroup;
+import com.local.resource.webplayer.repository.LastSessionStore;
 import com.local.resource.webplayer.service.FileIndexService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -10,23 +11,35 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.nio.file.Path;
+import java.util.Objects;
 import java.util.Random;
 
 @RequiredArgsConstructor
 @Controller
 public class PageController {
 
+    private final LastSessionStore lastSessionStore;
     private final FileIndexService fileIndexService;
 
     @GetMapping("/")
     public String index(@RequestParam(value = "group", required = false) String group,
-                        @CookieValue(name = "JSESSIONID") String sessionId,
                         Model model) {
         MediaSourceGroup mediaSourceGroup = fileIndexService.mediaSourceGroup(group);
 
         model.addAttribute("mediaGroup", mediaSourceGroup);
 
         return "index";
+    }
+
+    @GetMapping("/lastViewing")
+    public String lastViewing(@CookieValue(name = "JSESSIONID") String sessionId) {
+        Path mediaSourceGroupPath = lastSessionStore.findLastView(sessionId);
+
+        if (Objects.isNull(mediaSourceGroupPath)) {
+            return "redirect:/";
+        }
+        return String.format("redirect:/?group=%s", mediaSourceGroupPath);
     }
 
     @GetMapping("/resource/{mediaId}/next")
@@ -42,5 +55,6 @@ public class PageController {
         model.addAttribute("mediaId", mediaId);
         return "video";
     }
+
 
 }
