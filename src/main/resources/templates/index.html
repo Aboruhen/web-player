@@ -23,19 +23,19 @@
         </div>
     </div>
 </nav>
-<!--/*@thymesVar id="mediaGroup" type="com.local.resource.webplayer.dto.MediaSourceGroup"*/-->
-<div th:if="!${#arrays.isEmpty(mediaGroup.subGroups)}" class="btn-toolbar" role="toolbar">
-    <tr th:each="group : ${mediaGroup.subGroups}">
+<!--/*@thymesVar id="mediaGroup" type="com.local.resource.webplayer.dto.MediaSource[]"*/-->
+<div th:if="!${#arrays.isEmpty(mediaGroup.subSources)}" class="btn-toolbar" role="toolbar">
+    <tr th:each="path : ${mediaGroup.subSources}">
         <td>
-            <button class="btn btn-default" th:value="${group.groupLocation}" th:text="${group.groupName}"
+            <button class="btn btn-default" th:value="${path}" th:text="${path}"
                     th:onclick="|showGroupSource(this.value)|">Location Group
             </button>
         </td>
     </tr>
 </div>
 
-<!--/*@thymesVar id="media" type="com.local.resource.webplayer.dto.MediaSource"*/-->
-<div th:if="!${#arrays.isEmpty(mediaGroup.sourceList)}">
+<!--/*@thymesVar id="media" type="com.local.resource.webplayer.dto.MediaFile"*/-->
+<div th:if="!${#arrays.isEmpty(mediaGroup.mediaFiles)}">
     <table class="table table-striped">
         <thead class="thead-light">
         <tr>
@@ -43,7 +43,7 @@
             <th scope="col">View</th>
         </tr>
         </thead>
-        <tr th:each="media : ${mediaGroup.sourceList}">
+        <tr th:each="media : ${mediaGroup.mediaFiles}">
             <td th:text="${media.title}">Title</td>
             <td>
                 <a th:href="@{/resource/{id}(id=${media.id})}">Play</a>

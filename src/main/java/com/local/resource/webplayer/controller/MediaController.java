@@ -1,5 +1,6 @@
 package com.local.resource.webplayer.controller;
 
+import com.local.resource.webplayer.dto.MediaFile;
 import com.local.resource.webplayer.repository.LastSessionStore;
 import com.local.resource.webplayer.service.FileIndexService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -46,9 +46,9 @@ public class MediaController {
 
         log.info("Play video");
 
-        Path path = fileIndexService.getMedia(mediaId);
+        MediaFile mediaFile = fileIndexService.getMediaFile(mediaId);
         lastSessionStore.updateLastView(sessionId, mediaId);
-        var video = new UrlResource(String.format("file:%s", path));
+        var video = new UrlResource(String.format("file:%s", mediaFile.getLocation()));
         var region = resourceRegion(video, headers);
         return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
                 .contentType(MediaTypeFactory.getMediaType(video).orElse(MediaType.APPLICATION_OCTET_STREAM))
